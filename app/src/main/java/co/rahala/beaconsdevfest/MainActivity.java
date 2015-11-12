@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -33,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
         bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
         bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+
+        //various nice parameters but requires API23
+        ScanSettings settings = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
+                .build();
 
         final ScanCallback scanCallback = new ScanCallback() {
             @Override
