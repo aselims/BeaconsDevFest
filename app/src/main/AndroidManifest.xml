@@ -2,6 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="co.rahala.beaconsdevfest" >
 
+    <!-- App needs Bluetooth -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+
+    <!-- for Device Discovery-->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!-- App is available to BLE-capable devices only -->
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <!-- Allow location access for Android 6.0 Marshmallow (API Level 23) -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
