@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScanResult(int callbackType, ScanResult result) {
                 super.onScanResult(callbackType, result);
+                Log.i(TAG, result.getDevice().getAddress());
+                Log.i(TAG, String.valueOf(result.getRssi()));
+
             }
 
             @Override
