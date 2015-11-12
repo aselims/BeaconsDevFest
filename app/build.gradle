@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "co.rahala.beaconsdevfest"
-        minSdkVersion 19
+        minSdkVersion 22
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"

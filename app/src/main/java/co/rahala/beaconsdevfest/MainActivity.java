@@ -3,6 +3,7 @@ package co.rahala.beaconsdevfest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private BluetoothManager bluetoothManager;
     private BluetoothAdapter bluetoothAdapter;
+    private BluetoothLeScanner  bluetoothLeScanner;
     private TextView stopScanTV;
 
     @Override
@@ -28,24 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
         bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
+        bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
 
-        final BluetoothAdapter.LeScanCallback scanCallback = new BluetoothAdapter.LeScanCallback() {
-            @Override
-            public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
-                Log.i(TAG, "Address: " + bluetoothDevice.getAddress() +
-                                "\n RSSI:" + i +
-                                "\n name:" + bluetoothDevice.getName());
-            }
-        };
 
-        bluetoothAdapter.startLeScan(scanCallback);
 
-        findViewById(R.id.btn_stop_scan).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bluetoothAdapter.stopLeScan(scanCallback);
-            }
-        });
 
 
     }
