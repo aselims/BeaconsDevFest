@@ -18,7 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,17 +63,54 @@ public class MainActivity extends AppCompatActivity {
         filters.add(
                 new ScanFilter.Builder()
                         .setServiceUuid(EDDYSTONE_SERVICE_UUID)
-/*
-                        .setDeviceAddress("F9:82:48:1C:E5:D7")
-*/
                         .build());
 
         final ScanCallback scanCallback = new ScanCallback() {
             @Override
             public void onScanResult(int callbackType, ScanResult result) {
                 super.onScanResult(callbackType, result);
-                Log.i(TAG, result.getDevice().getAddress());
-                Log.i(TAG, String.valueOf(result.getRssi()));
+
+               byte[] data = result.getScanRecord().getServiceData(EDDYSTONE_SERVICE_UUID);
+                if (data == null)
+                    return;
+
+                 /*
+                byte frameType = data[0];
+                if (frameType != TYPE_UID)
+                    return;
+
+                String namespace = new BigInteger(1, Arrays.copyOfRange(data, 2, 12)).toString(16);
+                String instance = new BigInteger(1, Arrays.copyOfRange(data, 12, 18)).toString(16);
+
+                if (!(namespace + instance).equals("edd1ebeac04e5defa017" + "c5612a8cc253"))
+                    return;
+*/
+
+                //Received signal strength indication
+                int rssi;
+                int txPower;
+                double distance;
+                String deviceAddress = result.getDevice().getAddress();
+                if(deviceAddress.equals("F9:82:48:1C:E5:D7")){
+                    Log.i(TAG, String.valueOf(result.getRssi()));
+                    rssi = result.getRssi();
+
+                     txPower = data[1];
+                    // pathLoss = (txPower at 0m - rssi);
+                    distance = Math.pow(10, ((txPower - rssi) - 41) / 20.0);
+                    // because rssi is unstable, usually  only proximity zones are used:
+                    // - immediate (very close to the beacon)
+                    // - near (about 1-3 m from the beacon)
+                    // - far (further away or the signal is fluctuating too much to make a better estimate)
+                    // - unknown
+                    Log.i("distance", String.format("%.2fm", distance));
+
+                }
+
+
+
+
+
 
             }
 
