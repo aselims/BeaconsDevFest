@@ -10,6 +10,7 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.os.Bundle;
 import android.os.ParcelUuid;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,13 +23,16 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "BEACON";
     private BluetoothManager bluetoothManager;
     private BluetoothAdapter bluetoothAdapter;
-    private BluetoothLeScanner  bluetoothLeScanner;
-    private TextView stopScanTV;
+    private BluetoothLeScanner bluetoothLeScanner;
+    private TextView distanceTV;
+
+    private TextToSpeech textToSpeech;
 
     // The Eddystone Service UUID, 0xFEAA.
     private static final ParcelUuid EDDYSTONE_SERVICE_UUID = ParcelUuid.fromString("0000FEAA-0000-1000-8000-00805F9B34FB");
@@ -45,6 +49,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(Locale.UK);
+                }
+            }
+        });
+
+        distanceTV = (TextView) findViewById(R.id.tv_distance);
 
 
         bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
@@ -70,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             public void onScanResult(int callbackType, ScanResult result) {
                 super.onScanResult(callbackType, result);
 
-               byte[] data = result.getScanRecord().getServiceData(EDDYSTONE_SERVICE_UUID);
+                byte[] data = result.getScanRecord().getServiceData(EDDYSTONE_SERVICE_UUID);
                 if (data == null)
                     return;
 
@@ -91,11 +106,11 @@ public class MainActivity extends AppCompatActivity {
                 int txPower;
                 double distance;
                 String deviceAddress = result.getDevice().getAddress();
-                if(deviceAddress.equals("F9:82:48:1C:E5:D7")){
+                if (deviceAddress.equals("F9:82:48:1C:E5:D7")) {
                     Log.i(TAG, String.valueOf(result.getRssi()));
                     rssi = result.getRssi();
 
-                     txPower = data[1];
+                    txPower = data[1];
                     // pathLoss = (txPower at 0m - rssi);
                     distance = Math.pow(10, ((txPower - rssi) - 41) / 20.0);
                     // because rssi is unstable, usually  only proximity zones are used:
@@ -104,13 +119,16 @@ public class MainActivity extends AppCompatActivity {
                     // - far (further away or the signal is fluctuating too much to make a better estimate)
                     // - unknown
                     Log.i("distance", String.format("%.2fm", distance));
+                    distanceTV.setText(String.format("%.2fm", distance));
+
+                    if (distance > 4) {
+                        if (!textToSpeech.isSpeaking()) {
+                            textToSpeech.speak("Don't forget your belongings!", TextToSpeech.QUEUE_FLUSH, null, null);
+                        }
+                    }
+
 
                 }
-
-
-
-
-
 
             }
 
@@ -128,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
                 bluetoothLeScanner.stopScan(scanCallback);
             }
         });
-
 
 
     }
