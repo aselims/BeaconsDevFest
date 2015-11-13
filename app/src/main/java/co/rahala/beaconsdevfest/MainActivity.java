@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //UUID F9:82:48:1C:E5:D7
-        //URL http://goo.gl/Q0Rqsh
+        //URL D7:C0:EF:57:4E:07
         List<ScanFilter> filters = new ArrayList<ScanFilter>();
         filters.add(
                 new ScanFilter.Builder()
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        bluetoothLeScanner.startScan(scanCallback);
+        bluetoothLeScanner.startScan(filters, settings, scanCallback);
 
         findViewById(R.id.btn_stop_scan).setOnClickListener(new View.OnClickListener() {
             @Override
