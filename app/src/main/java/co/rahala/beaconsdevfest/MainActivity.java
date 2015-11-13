@@ -31,6 +31,11 @@ public class MainActivity extends AppCompatActivity {
     // The Eddystone Service UUID, 0xFEAA.
     private static final ParcelUuid EDDYSTONE_SERVICE_UUID = ParcelUuid.fromString("0000FEAA-0000-1000-8000-00805F9B34FB");
 
+    // Eddystone frame types
+    private static final byte TYPE_UID = 0x00;
+    private static final byte TYPE_URL = 0x10;
+    private static final byte TYPE_TLM = 0x20;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +61,9 @@ public class MainActivity extends AppCompatActivity {
         filters.add(
                 new ScanFilter.Builder()
                         .setServiceUuid(EDDYSTONE_SERVICE_UUID)
+/*
                         .setDeviceAddress("F9:82:48:1C:E5:D7")
-                        /* .setServiceData(EDDYSTONE_SERVICE_UUID, new byte[]{TYPE_TLM}) */
+*/
                         .build());
 
         final ScanCallback scanCallback = new ScanCallback() {
